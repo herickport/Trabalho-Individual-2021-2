@@ -1,5 +1,7 @@
-class LivrosController < ApplicationController
-  before_action :set_livro, only: %i[ show edit update destroy ]
+# frozen_string_literal: true
+
+class LivrosController < ApplicationController # rubocop:todo Style/Documentation
+  before_action :set_livro, only: %i[show edit update destroy]
 
   # GET /livros or /livros.json
   def index
@@ -7,8 +9,7 @@ class LivrosController < ApplicationController
   end
 
   # GET /livros/1 or /livros/1.json
-  def show
-  end
+  def show; end
 
   # GET /livros/new
   def new
@@ -16,8 +17,7 @@ class LivrosController < ApplicationController
   end
 
   # GET /livros/1/edit
-  def edit
-  end
+  def edit; end
 
   # POST /livros or /livros.json
   def create
@@ -25,7 +25,7 @@ class LivrosController < ApplicationController
 
     respond_to do |format|
       if @livro.save
-        format.html { redirect_to livro_url(@livro), notice: "Livro was successfully created." }
+        format.html { redirect_to livro_url(@livro), notice: 'Livro was successfully created.' }
         format.json { render :show, status: :created, location: @livro }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -38,7 +38,7 @@ class LivrosController < ApplicationController
   def update
     respond_to do |format|
       if @livro.update(livro_params)
-        format.html { redirect_to livro_url(@livro), notice: "Livro was successfully updated." }
+        format.html { redirect_to livro_url(@livro), notice: 'Livro was successfully updated.' }
         format.json { render :show, status: :ok, location: @livro }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -52,19 +52,20 @@ class LivrosController < ApplicationController
     @livro.destroy
 
     respond_to do |format|
-      format.html { redirect_to livros_url, notice: "Livro was successfully destroyed." }
+      format.html { redirect_to livros_url, notice: 'Livro was successfully destroyed.' }
       format.json { head :no_content }
     end
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_livro
-      @livro = Livro.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def livro_params
-      params.require(:livro).permit(:titulo, :autor, :ano, :editora, :edicao, :livro_eletronico)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_livro
+    @livro = Livro.find(params[:id])
+  end
+
+  # Only allow a list of trusted parameters through.
+  def livro_params
+    params.require(:livro).permit(:titulo, :autor, :ano, :editora, :edicao, :livro_eletronico)
+  end
 end

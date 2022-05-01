@@ -1,4 +1,6 @@
-class CreateLivros < ActiveRecord::Migration[7.0]
+# frozen_string_literal: true
+
+class CreateLivros < ActiveRecord::Migration[7.0] # rubocop:todo Style/Documentation
   def change
     create_table :livros do |t|
       t.string :titulo
