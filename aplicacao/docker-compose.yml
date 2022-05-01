@@ -9,6 +9,8 @@ services:
       - "5432:5432"
     env_file:
       - db.env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
   app:
     container_name: aplicacao
@@ -31,3 +33,6 @@ services:
       - "80:80"
     depends_on:
       - app
+
+volumes:
+  postgres_data:
