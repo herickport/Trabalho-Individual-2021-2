@@ -27,3 +27,15 @@ jobs:
       - name: Run Tests
         working-directory: ./aplicacao
         run: docker-compose run app rspec
+
+  lint:
+    name: Lint
+    runs-on: ubuntu:latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install rubocop
+        working-directory: ./aplicacao
+        run: docker-compose run app gem install rubocop
+      - name: Run lint
+        working-directory: ./aplicacao
+        run: docker-compose run app rubocop
