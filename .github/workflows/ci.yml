@@ -13,4 +13,5 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Build app
+        working-directory: ./aplicacao
         run: docker-compose up -d
