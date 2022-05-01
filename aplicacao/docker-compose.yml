@@ -9,3 +9,14 @@ services:
       - "5432:5432"
     env_file:
       - db.env
+
+  app:
+    container_name: aplicacao
+    restart: on-failure
+    build: .
+    volumes:
+      - .:/aplicacao
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
