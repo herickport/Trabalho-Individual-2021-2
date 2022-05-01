@@ -33,9 +33,6 @@ jobs:
     runs-on: ubuntu:latest
     steps:
       - uses: actions/checkout@v3
-      - name: Install rubocop
+      - name: Install rubocop and run lint
         working-directory: ./aplicacao
-        run: docker-compose run app gem install rubocop
-      - name: Run lint
-        working-directory: ./aplicacao
-        run: docker-compose run app rubocop
+        run: docker-compose run app bash -c "gem install rubocop; rubocop"
