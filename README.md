@@ -9,27 +9,36 @@ O sistema se trata de uma aplicação em Ruby on Rails composta por:
 - Aplicação de Gerência de Biblioteca;
 - Banco de Dados Postgres;
 
-Para executar a aplicação em sua máquina, basta seguir o passo-a-passo descrito no arquivo [README](./aplicacao/README.md) da pasta.
-
 ## Resumo da aplicação
 
 A aplicação é um simples sistema de cadastro de livros. Porém, o foco do trabalho é na automação da build, testes, conteinerização e configuração dos pipelines de CI/CD. Está escrita em Ruby on Rails, utiliza o banco de dados Postgres e inclui testes.
 
 ## Etapas de trabalho
 
-O trabalho deve ser elaborado através de etapas. Cada uma das etapas deve ser realizada em um commit separado com o resultado funcional desta etapa.
-
-As etapas de 1 a 3 são relacionadas ao isolamento do ambiente utilizando a ferramenta Docker e Docker Compose. Neste sentido o tutorial abaixo cobre os conceitos fundamentais para o uso destas tecnologias.
-
-[Tutorial de Docker](https://github.com/FGA-GCES/Workshop-Docker-Entrega-01/tree/main/tutorial_docker)
-
-As etapas de 4 e 5 são relacionadas à configuração do pipeline de CI e CD.
-
-[Tutorial CI - Gitlab](https://github.com/FGA-GCES/Workshop-CI-Entrega-02/tree/main/gitlab-ci_tutorial)
-
 ### 1. Containerização do Banco
 
 A versão inicial do sistema é uma aplicação Ruby on Rails cujo funcionamento requer uma instalação de um banco de dados Postgres. A primeira etapa do trabalho é de configurar um container somente para o banco de dados com as credenciais especificadas na descrição da aplicação e testar o funcionamento do mesmo.
+
+#### Solução
+
+A containerização do Banco de Dados Postgres foi realizada utilizando a imagem oficial do postgres. Para isso, foi criado o service ***db*** no Docker Compose e um arquivo para definir as variáveis de ambiente ([Containerização do Banco](https://github.com/herickport/Trabalho-Individual-2021-2/commit/b1512854fae4a694e831fd5a08dbb98249a06778)). Posteriormente, foi adicionado um [volume](https://github.com/herickport/Trabalho-Individual-2021-2/commit/629f1eaa43629a54b19e7d778887729168e73b3c) ao container do banco de dados com o intuito de persistir os dados.
+
+##### Como Rodar:
+
+- Container do Banco de Dados: 
+```
+docker-compose up --build
+```
+
+- Criação do Banco com seed
+```
+rails db:setup
+```
+
+- Rodar a aplicação
+```
+rails server
+```
 
 ### 2. Containerização da Aplicação + Banco
 
@@ -37,9 +46,38 @@ Nesta segunda etapa, tanto a aplicação quanto o banco de dados deverão estar 
 
 Deverá ser utilizado um orquestrador (Docker Compose) para gerenciar comunicação entre os containers além do uso de credenciais, networks, volumes, entre outras configurações necessárias para a correta execução da aplicação.
 
+#### Solução
+
+Para a containerização da aplicação foi adicionado um novo service ***app*** ao Docker Compose, com build definida a partir de um arquivo Dockerfile que constrói a imagem do ruby, define o que será executado na inicialização do container (ENTRYPOINT + CMD), etc. [Containerização da Aplicação + Banco](https://github.com/herickport/Trabalho-Individual-2021-2/commit/9ef061963a92cd30789a4d26e2571e4278efb173)
+
+##### Como Rodar:
+
+- Build: 
+```
+docker-compose build
+```
+
+- Configuração do banco (Antes da primeira execução)
+```
+docker-compose run app rails db:setup
+```
+
+- Rodar a aplicação (Acessível em http://0.0.0.0:3000)
+```
+docker-compose up
+```
+
 ### 3. Adição de um container do Nginx 
 
 A aplicação originalmente está configurada para rodar com um servidor web simples interno na porta 3000. Nesta etapa será necessário adicionar o servidor Nginx para servir a aplicação através da porta 80. O resultado final também estará expresso utilizando o Docker Compose.
+
+#### Solução
+
+Para adicionar o servidor Nginx ao projeto foi utilizado um arquivo de configuração ***nginx.conf*** e um Dockerfile (Dockerfile.nginx), definindo os passos necessários para a criação do container do nginx. Com isso, foi adicionado um novo service ***nginx*** ao Docker Compose do projeto. [Containerização da Aplicação + Banco + Nginx](https://github.com/herickport/Trabalho-Individual-2021-2/commit/09c15ba932a41ca9d90c301f808ff9aef19e4344)
+
+##### Como Rodar:
+
+Os comandos para execução ao fim desta etapa são os mesmo descritos na etapa anterior (2. Containerização da Aplicação + Banco), com exceção de que agora a aplicação também estará disponível no endereço http://localhost:80.
 
 ### 4. Integração Contínua (CI)
 
@@ -54,27 +92,14 @@ Requisitos da configuração da Integração Contínua (Gitlab ou Github) inclue
 - Test
 - Lint
 
+#### Solução
+
+Para realizar a Integração Contínua da aplicação foi utilizado o Github Actions, criando uma pipeline de CI (definida em [.github/workflows/ci.yml](https://github.com/herickport/Trabalho-Individual-2021-2/blob/main/.github/workflows/ci.yml)) e que é executada sempre que há um push ou pull request à branch main, rodando os jobs de **build**, **test** e **lint** de maneira sequencial.
+
 ### 5. Deploy Contínuo (CD)
 
 A etapa final do trabalho deverá ser realizada à partir do deploy automático da aplicação que deve ser realizado à partir após passar sem erros em todas as etapas de CI.
 
-## Avaliação
+#### Solução
 
-A avaliação do trabalho será feita à partir da correta implementação de cada etapa 1 a 5. A avaliação será feita de maneira quantitativa (se foi realizado a implementação + documentação), e qualitativa (como foi implementado, entendimento dos conceitos na prática, complexidade da solução). Para isso, faça os commits atômicos, bem documentados, completos a fim de facilitar o entendimento e avaliação do seu trabalho. Lembrando o trabalho é individual.
-
-| Item | Peso |
-|---|---|
-| Containerização do Banco                      | 1.0 |
-| Containerização da Aplicação + Banco          | 2.0 |
-| Containerização da Aplicação + Banco + Nginx  | 2.0 |
-| Integração Contínua (Build, Test, Lint)       | 3.0 |
-| Deploy Contínuo                               | 2.0 |
-
-
-##  Exemplo de Trabalhos Anteriores
-
-Alguns trabalhos de trabalhos anteriores:
-
-- [2020/2](https://github.com/FGA-GCES/Trabalho-Individual-2020-2)
-- [2021/1 - Parte 1](https://github.com/FGA-GCES/Workshop-Docker-Entrega-01)
-- [2021/1 - Parte 2](https://github.com/FGA-GCES/Workshop-Docker-Entrega-02)
+A pipeline de CD da aplicação está definida em [.github/workflows/cd.yml](https://github.com/herickport/Trabalho-Individual-2021-2/blob/main/.github/workflows/cd.yml) e também foi realizada utilizando o Github Actions. Ela é executada após a pipeline de CI finalizar e faz o deploy para o repositório [gces](https://hub.docker.com/repository/docker/herickport/gces) no Docker Hub.
