@@ -3,8 +3,8 @@ name: App CD
 on:
   workflow_run:
     workflows: App CI
-  types:
-    - completed
+    types:
+      - completed
 
 jobs:
   build:
